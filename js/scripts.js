@@ -1,5 +1,4 @@
-$(function() {
-  window.requestAnimFrame = (function() {
+window.requestAnimFrame = (function() {
     return window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
@@ -71,4 +70,3 @@ $(function() {
   var resultId = parseInt(Math.random() * 11);
 
   var wheel = new SpinWheel(resultId);
-});
