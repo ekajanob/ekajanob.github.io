@@ -1,0 +1,46 @@
+.wheel {
+width: 470px;
+height: 50px;
+padding: 10px 9px;
+margin: 0 auto;
+overflow: hidden;
+}
+
+.wheel-wrapper {
+width: 1950px;
+}
+
+.wheel-item {
+    float: left;
+    width: 177.27px;
+    height: 30px;
+    color: white;
+    text-align: center;
+}
+
+.wheel-item p {
+    line-height: 30px;
+    margin: 0;
+}
+
+.wheel-green {
+    background: #62c30c;
+}
+
+.wheel-black {
+    background: #3a3a3a;
+}
+.wheel-red {
+background: #e63359;
+}
+
+.wheel-pointer {
+    width: 0;
+    height: 50px;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-left: 2px solid orange;
+}
