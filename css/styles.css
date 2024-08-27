@@ -1,0 +1,28 @@
+#chart {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: 0;
+    left: 0;
+}
+
+#names {
+    position: absolute;
+    top: 520px;
+    width: 500px;
+    text-align: center;
+}
+
+#names ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#names li {
+    display: inline-block;
+    font-size: 24px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
