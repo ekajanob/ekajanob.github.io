@@ -17,7 +17,7 @@ var data = [
     {"label":"Item is...",  "value":3,  "Socks"},
     {"label":"Item is...",  "value":3,  "Jacket"}, 
     {"label":"Item is...",  "value":3,  "Accessory"},
-    {"label":"Item is...",  "value":3,  "Shoes?"},        
+    {"label":"Item is...",  "value":3,  "Shoes?"}        
 ];
 
 var svg = d3.select('#chart')
