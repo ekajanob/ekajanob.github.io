@@ -1,4 +1,4 @@
-var padding = {top:20, right:40, bottom:0, left:0},
+var padding = {top: 20, right: 40, bottom: 0, left: 0},
     w = 500 - padding.left - padding.right,
     h = 500 - padding.top - padding.bottom,
     r = Math.min(w, h) / 2,
@@ -6,29 +6,26 @@ var padding = {top:20, right:40, bottom:0, left:0},
     oldrotation = 0,
     picked = 100000,
     oldpick = [],
-    color = d3.scale.category20(),
-    names = ["Tom", "Ole", "Dan"],
-    currentIndex = 0;
+    color = d3.scale.category20();
 
 var data = [
-    {"label":"Item is...",  "value":1,  "Hat"},
-    {"label":"Item is...",  "value":2,  "Shirt"}, 
-    {"label":"Item is...",  "value":3,  "Trousers"},
-    {"label":"Item is...",  "value":3,  "Socks"},
-    {"label":"Item is...",  "value":3,  "Jacket"}, 
-    {"label":"Item is...",  "value":3,  "Accessory"},
-    {"label":"Item is...",  "value":3,  "Shoes?"}        
+    {"label":"Leo's Choice", "value":1},
+    {"label":"Joe's Choice", "value":2}, 
+    {"label":"Tom's Choice", "value":3}
+    // Add more data items here
 ];
+
+var names = ["Tom", "Ole", "Dan"];
 
 var svg = d3.select('#chart')
     .append("svg")
     .data([data])
-    .attr("width",  w + padding.left + padding.right)
+    .attr("width", w + padding.left + padding.right)
     .attr("height", h + padding.top + padding.bottom);
 
 var container = svg.append("g")
     .attr("class", "chartholder")
-    .attr("transform", "translate(" + (w/2 + padding.left) + "," + (h/2 + padding.top) + ")");
+    .attr("transform", "translate(" + (w / 2 + padding.left) + "," + (h / 2 + padding.top) + ")");
 
 var vis = container.append("g");
 
@@ -50,7 +47,7 @@ arcs.append("text").attr("transform", function(d){
         d.innerRadius = 0;
         d.outerRadius = r;
         d.angle = (d.startAngle + d.endAngle) / 2;
-        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")translate(" + (d.outerRadius -10) +")";
+        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")translate(" + (d.outerRadius - 10) +")";
     })
     .attr("text-anchor", "end")
     .text(function(d, i) { return data[i].label; });
@@ -59,14 +56,13 @@ container.on("click", spin);
 
 function spin(d) {
     container.on("click", null);
-    
-    if (oldpick.length == data.length) {
-        container.on("click", null);
+
+    if (oldpick.length === data.length) {
+        console.log("All options used.");
         return;
     }
 
     var ps = 360 / data.length,
-        pieslice = Math.round(1440 / data.length),
         rng = Math.floor((Math.random() * 1440) + 360);
 
     rotation = (Math.round(rng / ps) * ps);
@@ -90,20 +86,9 @@ function spin(d) {
             d3.select(".slice:nth-child(" + (picked + 1) + ") path")
                 .attr("fill", "#111");
 
-            d3.select("#question h1").text(data[picked].question);
-            
-            // Assign the selected item to the current name
-            var name = names[currentIndex];
-            var nameElement = document.querySelector("#nameList li:nth-child(" + (currentIndex + 1) + ")");
-            nameElement.textContent = name + ": " + data[picked].label;
+            assignToName(data[picked].label);
 
-            // Remove the selected item from the data array
-            data.splice(picked, 1);
             oldrotation = rotation;
-
-            // Update the currentIndex to the next name
-            currentIndex = (currentIndex + 1) % names.length;
-
             container.on("click", spin);
         });
 }
@@ -115,4 +100,31 @@ function rotTween(to) {
     };
 }
 
-// Arrow and spin text remain the same as before...
+function assignToName(label) {
+    if (names.length > 0) {
+        var name = names.shift();
+        d3.select("#name-" + name.toLowerCase()).text(name + ": " + label);
+    }
+}
+
+// Arrow
+svg.append("g")
+    .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + ((h / 2) + padding.top) + ")")
+    .append("path")
+    .attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
+    .style({"fill":"black"});
+
+// Spin circle
+container.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 60)
+    .style({"fill":"white","cursor":"pointer"});
+
+// Spin text
+container.append("text")
+    .attr("x", 0)
+    .attr("y", 15)
+    .attr("text-anchor", "middle")
+    .text("SPIN")
+    .style({"font-weight":"bold", "font-size":"30px"});
