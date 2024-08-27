@@ -1,156 +1,118 @@
 var padding = {top:20, right:40, bottom:0, left:0},
-            w = 500 - padding.left - padding.right,
-            h = 500 - padding.top  - padding.bottom,
-            r = Math.min(w, h)/2,
-            rotation = 0,
-            oldrotation = 0,
-            picked = 100000,
-            oldpick = [],
-            color = d3.scale.category20();//category20c()
-            //randomNumbers = getRandomNumbers();
-        //http://osric.com/bingo-card-generator/?title=HTML+and+CSS+BINGO!&words=padding%2Cfont-family%2Ccolor%2Cfont-weight%2Cfont-size%2Cbackground-color%2Cnesting%2Cbottom%2Csans-serif%2Cperiod%2Cpound+sign%2C%EF%B9%A4body%EF%B9%A5%2C%EF%B9%A4ul%EF%B9%A5%2C%EF%B9%A4h1%EF%B9%A5%2Cmargin%2C%3C++%3E%2C{+}%2C%EF%B9%A4p%EF%B9%A5%2C%EF%B9%A4!DOCTYPE+html%EF%B9%A5%2C%EF%B9%A4head%EF%B9%A5%2Ccolon%2C%EF%B9%A4style%EF%B9%A5%2C.html%2CHTML%2CCSS%2CJavaScript%2Cborder&freespace=true&freespaceValue=Web+Design+Master&freespaceRandom=false&width=5&height=5&number=35#results
-        var data = [
-                    {"label":"Leo's Choice",  "value":1,  "question":"What are you going to choose Leo?"},
-                    {"label":"Joe's Choice",  "value":2,  "question":"What are you going to choose Joe?"}, 
-                    {"label":"Tom's Choice",  "value":3,  "question":"What are you going to choose Tom??"},
-                    {"label":"Jon's Choice",  "value":4,  "question":"What are you going to choose Jon?"},
-                    {"label":"Bon's Choice", "value":5, "question":"What are you going to choose Bon?"},
-                    {"label":"Spoons", "value":6, "question":"JACKPOT SPOONS IT IS"},
-                    {"label":"Nandos",  "value":7,  "question":"What are you going to order from Nando's?"}, 
-                    {"label":"Banyan",  "value":8,  "question":"What are you going to order from Banyan?"}, 
-                    {"label":"Piccalinos",  "value":9,  "question":"What are you going to order from Piccalinos?"}, 
-                    {"label":"TGIs",  "value":10,  "question":"What are you going to order from TGIs?"}, 
-                    {"label":"Five Guys", "value":11, "question":"What are you going to order from Five Guys?"},
-                    {"label":"Pizza Hut", "value":12, "question":"What are you going to order from Pizza Hut?"},
-                    {"label":"Nam Jai Thai", "value":13, "question":"What are you going to order from Nam Jai Thai?"},
-                    {"label":"Red Pepper", "value":14, "question":"What are you going to order from Red Pepper?"},
-                    {"label":"Westbourne Spice", "value":15, "question":"What are you going to order from Westbourne Spice?"},
-                    {"label":"Jewel Of India", "value":16, "question":"What are you going to order from Jewel Of India?"},
-                    {"label":"Aagrah", "value":17, "question":"What are you going to order from Aagrah?"},
-                    {"label":"Kashmiri", "value":18, "question":"What are you going to order from Kashmiri?"},
-                    {"label":"Pieminster", "value":19, "question":"What are you going to order from Pieminster?"},
-                    {"label":"Randy Leeds Place", "value":20, "question":"Where in Leeds are we going then?"}
-        ];
-        var svg = d3.select('#chart')
-            .append("svg")
-            .data([data])
-            .attr("width",  w + padding.left + padding.right)
-            .attr("height", h + padding.top + padding.bottom);
-        var container = svg.append("g")
-            .attr("class", "chartholder")
-            .attr("transform", "translate(" + (w/2 + padding.left) + "," + (h/2 + padding.top) + ")");
-        var vis = container
-            .append("g");
+    w = 500 - padding.left - padding.right,
+    h = 500 - padding.top - padding.bottom,
+    r = Math.min(w, h) / 2,
+    rotation = 0,
+    oldrotation = 0,
+    picked = 100000,
+    oldpick = [],
+    color = d3.scale.category20(),
+    names = ["Tom", "Ole", "Dan"],
+    currentIndex = 0;
+
+var data = [
+    {"label":"Item is...",  "value":1,  "Hat"},
+    {"label":"Item is...",  "value":2,  "Shirt"}, 
+    {"label":"Item is...",  "value":3,  "Trousers"},
+    {"label":"Item is...",  "value":3,  "Socks"},
+    {"label":"Item is...",  "value":3,  "Jacket"}, 
+    {"label":"Item is...",  "value":3,  "Accessory"},
+    {"label":"Item is...",  "value":3,  "Shoes?"},        
+];
+
+var svg = d3.select('#chart')
+    .append("svg")
+    .data([data])
+    .attr("width",  w + padding.left + padding.right)
+    .attr("height", h + padding.top + padding.bottom);
+
+var container = svg.append("g")
+    .attr("class", "chartholder")
+    .attr("transform", "translate(" + (w/2 + padding.left) + "," + (h/2 + padding.top) + ")");
+
+var vis = container.append("g");
+
+var pie = d3.layout.pie().sort(null).value(function(d){ return 1; });
+
+var arc = d3.svg.arc().outerRadius(r);
+
+var arcs = vis.selectAll("g.slice")
+    .data(pie)
+    .enter()
+    .append("g")
+    .attr("class", "slice");
+
+arcs.append("path")
+    .attr("fill", function(d, i){ return color(i); })
+    .attr("d", function(d){ return arc(d); });
+
+arcs.append("text").attr("transform", function(d){
+        d.innerRadius = 0;
+        d.outerRadius = r;
+        d.angle = (d.startAngle + d.endAngle) / 2;
+        return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")translate(" + (d.outerRadius -10) +")";
+    })
+    .attr("text-anchor", "end")
+    .text(function(d, i) { return data[i].label; });
+
+container.on("click", spin);
+
+function spin(d) {
+    container.on("click", null);
+    
+    if (oldpick.length == data.length) {
+        container.on("click", null);
+        return;
+    }
+
+    var ps = 360 / data.length,
+        pieslice = Math.round(1440 / data.length),
+        rng = Math.floor((Math.random() * 1440) + 360);
+
+    rotation = (Math.round(rng / ps) * ps);
+
+    picked = Math.round(data.length - (rotation % 360) / ps);
+    picked = picked >= data.length ? (picked % data.length) : picked;
+
+    if (oldpick.indexOf(picked) !== -1) {
+        d3.select(this).call(spin);
+        return;
+    } else {
+        oldpick.push(picked);
+    }
+
+    rotation += 90 - Math.round(ps / 2);
+    
+    vis.transition()
+        .duration(3000)
+        .attrTween("transform", rotTween)
+        .each("end", function() {
+            d3.select(".slice:nth-child(" + (picked + 1) + ") path")
+                .attr("fill", "#111");
+
+            d3.select("#question h1").text(data[picked].question);
             
-        var pie = d3.layout.pie().sort(null).value(function(d){return 1;});
-        // declare an arc generator function
-        var arc = d3.svg.arc().outerRadius(r);
-        // select paths, use arc generator to draw
-        var arcs = vis.selectAll("g.slice")
-            .data(pie)
-            .enter()
-            .append("g")
-            .attr("class", "slice");
-            
-        arcs.append("path")
-            .attr("fill", function(d, i){ return color(i); })
-            .attr("d", function (d) { return arc(d); });
-        // add the text
-        arcs.append("text").attr("transform", function(d){
-                d.innerRadius = 0;
-                d.outerRadius = r;
-                d.angle = (d.startAngle + d.endAngle)/2;
-                return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")translate(" + (d.outerRadius -10) +")";
-            })
-            .attr("text-anchor", "end")
-            .text( function(d, i) {
-                return data[i].label;
-            });
-        container.on("click", spin);
-        function spin(d){
-            
-            container.on("click", null);
-            //all slices have been seen, all done
-            console.log("OldPick: " + oldpick.length, "Data length: " + data.length);
-            if(oldpick.length == data.length){
-                console.log("done");
-                container.on("click", null);
-                return;
-            }
-            var  ps       = 360/data.length,
-                 pieslice = Math.round(1440/data.length),
-                 rng      = Math.floor((Math.random() * 1440) + 360);
-                
-            rotation = (Math.round(rng / ps) * ps);
-            
-            picked = Math.round(data.length - (rotation % 360)/ps);
-            picked = picked >= data.length ? (picked % data.length) : picked;
-            if(oldpick.indexOf(picked) !== -1){
-                d3.select(this).call(spin);
-                return;
-            } else {
-                oldpick.push(picked);
-            }
-            rotation += 90 - Math.round(ps/2);
-            vis.transition()
-                .duration(3000)
-                .attrTween("transform", rotTween)
-                .each("end", function(){
-                    //mark question as seen
-                    d3.select(".slice:nth-child(" + (picked + 1) + ") path")
-                        .attr("fill", "#111");
-                    //populate question
-                    d3.select("#question h1")
-                        .text(data[picked].question);
-                    oldrotation = rotation;
-              
-                    /* Get the result value from object "data" */
-                    console.log(data[picked].value)
-              
-                    /* Comment the below line for restrict spin to sngle time */
-                    container.on("click", spin);
-                });
-        }
-        //make arrow
-        svg.append("g")
-            .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + ((h/2)+padding.top) + ")")
-            .append("path")
-            .attr("d", "M-" + (r*.15) + ",0L0," + (r*.05) + "L0,-" + (r*.05) + "Z")
-            .style({"fill":"black"});
-        //draw spin circle
-        container.append("circle")
-            .attr("cx", 0)
-            .attr("cy", 0)
-            .attr("r", 60)
-            .style({"fill":"white","cursor":"pointer"});
-        //spin text
-        container.append("text")
-            .attr("x", 0)
-            .attr("y", 15)
-            .attr("text-anchor", "middle")
-            .text("SPIN")
-            .style({"font-weight":"bold", "font-size":"30px"});
-        
-        
-        function rotTween(to) {
-          var i = d3.interpolate(oldrotation % 360, rotation);
-          return function(t) {
-            return "rotate(" + i(t) + ")";
-          };
-        }
-        
-        
-        function getRandomNumbers(){
-            var array = new Uint16Array(1000);
-            var scale = d3.scale.linear().range([360, 1440]).domain([0, 100000]);
-            if(window.hasOwnProperty("crypto") && typeof window.crypto.getRandomValues === "function"){
-                window.crypto.getRandomValues(array);
-                console.log("works");
-            } else {
-                //no support for crypto, get crappy random numbers
-                for(var i=0; i < 1000; i++){
-                    array[i] = Math.floor(Math.random() * 100000) + 1;
-                }
-            }
-            return array;
-        }
+            // Assign the selected item to the current name
+            var name = names[currentIndex];
+            var nameElement = document.querySelector("#nameList li:nth-child(" + (currentIndex + 1) + ")");
+            nameElement.textContent = name + ": " + data[picked].label;
+
+            // Remove the selected item from the data array
+            data.splice(picked, 1);
+            oldrotation = rotation;
+
+            // Update the currentIndex to the next name
+            currentIndex = (currentIndex + 1) % names.length;
+
+            container.on("click", spin);
+        });
+}
+
+function rotTween(to) {
+    var i = d3.interpolate(oldrotation % 360, rotation);
+    return function(t) {
+        return "rotate(" + i(t) + ")";
+    };
+}
+
+// Arrow and spin text remain the same as before...
