@@ -1,47 +1,28 @@
-#chart{
-    position:absolute;
-    width:500px;
-    height:500px;
-    top:0;
-    left:0;
-}
-
-#question{
+#chart {
     position: absolute;
-    width:400px;
-    height:500px;
-    top:0;
-    left:520px;
-}
-
-#question h1{
-    font-size: 50px;
-    font-weight: bold;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    position: absolute;
-    padding: 0;
-    margin: 0;
-    top:50%;
-    -webkit-transform:translate(0,-50%);
-            transform:translate(0,-50%);
+    width: 500px;
+    height: 500px;
+    top: 0;
+    left: 0;
 }
 
 #names {
     position: absolute;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
+    top: 520px;
+    width: 500px;
     text-align: center;
 }
 
-#nameList {
+#names ul {
     list-style-type: none;
     padding: 0;
 }
 
-#nameList li {
+#names li {
     display: inline-block;
-    margin: 0 15px;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 24px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
 }
